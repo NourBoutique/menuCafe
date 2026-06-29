@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منيو الكافيه</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+          background: #1A1A2E;
+          color: white;
+          font-family: Arial, sans-serif;
+          padding-bottom: 140px;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+          background: linear-gradient(135deg, #16213E, #0F3460);
+          padding: 18px 16px 12px;
+          text-align: center;
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          box-shadow: 0 3px 15px rgba(0,0,0,0.4);
+        }
+        .header .logo { font-size: 28px; }
+        .header h2 { color: #FFD700; font-size: 20px; margin: 4px 0; }
+        .header .table-badge {
+          display: inline-block;
+          background: rgba(255,215,0,0.15);
+          border: 1px solid #FFD700;
+          color: #FFD700;
+          padding: 3px 14px;
+          border-radius: 20px;
+          font-size: 13px;
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+          display: flex;
+          overflow-x: auto;
+          background: #16213E;
+          padding: 0 8px;
+          gap: 4px;
+          scrollbar-width: none;
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .tabs::-webkit-scrollbar { display: none; }
+        .tab {
+          padding: 12px 18px;
+          white-space: nowrap;
+          cursor: pointer;
+          border-bottom: 3px solid transparent;
+          color: #888;
+          font-size: 13px;
+          transition: all 0.2s;
+          flex-shrink: 0;
+        }
+        .tab.active { color: #FFD700; border-bottom-color: #FFD700; }
+
+        /* ===== SEARCH ===== */
+        .search-box {
+          padding: 10px 12px;
+          background: #16213E;
+        }
+        .search-box input {
+          width: 100%;
+          background: rgba(255,255,255,0.07);
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: 10px;
+          color: white;
+          padding: 9px 14px;
+          font-size: 14px;
+          outline: none;
+        }
+        .search-box input::placeholder { color: #555; }
+
+        /* ===== GRID ===== */
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10px;
+          padding: 12px;
+        }
+
+        .card {
+          background: #16213E;
+          border-radius: 16px;
+          padding: 16px 10px 12px;
+          text-align: center;
+          border: 2px solid rgba(255,255,255,0.05);
+          transition: border-color 0.2s, transform 0.1s;
+          cursor: pointer;
+        }
+        .card.in-cart {
+          border-color: #FFD700;
+          background: #1a2a1a;
+        }
+        .card .emoji { font-size: 32px; }
+        .card .name {
+          font-size: 13px;
+          font-weight: bold;
+          margin: 8px 0 4px;
+          min-height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1.3;
+        }
+        .card .price {
+          color: #FFD700;
+          font-size: 14px;
+          font-weight: bold;
+          margin-bottom: 10px;
+        }
+
+        .add-btn {
+          background: #FFD700;
+          color: #000;
+          border: none;
+          border-radius: 20px;
+          padding: 6px 20px;
+          font-weight: bold;
+          cursor: pointer;
+          font-size: 13px;
+          transition: opacity 0.2s;
+        }
+        .add-btn:active { opacity: 0.8; }
+
+        .qty-ctrl {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 14px;
+        }
+        .qty-btn {
+          width: 30px; height: 30px;
+          background: #FFD700;
+          color: #000;
+          border: none;
+          border-radius: 50%;
+          font-size: 18px;
+          cursor: pointer;
+          font-weight: bold;
+          line-height: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .qty-num { font-size: 18px; font-weight: bold; color: #FFD700; }
+
+        /* ===== EMPTY ===== */
+        .empty {
+          text-align: center;
+          padding: 60px 20px;
+          color: #555;
+          grid-column: span 2;
+        }
+        .empty .icon { font-size: 50px; margin-bottom: 12px; }
+
+        /* ===== CART BAR ===== */
+        .cart-bar {
+          position: fixed;
+          bottom: 0; left: 0; right: 0;
+          background: #0F3460;
+          padding: 12px 16px;
+          border-top: 1px solid rgba(255,215,0,0.3);
+          display: none;
+          z-index: 200;
+        }
+        .cart-bar.visible { display: block; }
+
+        .note-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 10px;
+        }
+        .note-row span { font-size: 16px; }
+        .note-input {
+          flex: 1;
+          background: rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.15);
+          border-radius: 8px;
+          color: white;
+          padding: 7px 12px;
+          font-size: 13px;
+          outline: none;
+        }
+        .note-input::placeholder { color: #555; }
+
+        .cart-bottom {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+        }
+        .cart-info { font-size: 14px; line-height: 1.6; }
+        .cart-info .count { color: #FFD700; font-weight: bold; font-size: 16px; }
+        .cart-info .total { color: #aaa; font-size: 13px; }
+
+        .send-btn {
+          background: linear-gradient(135deg, #FFD700, #FFA500);
+          color: #000;
+          border: none;
+          border-radius: 14px;
+          padding: 12px 24px;
+          font-weight: bold;
+          font-size: 15px;
+          cursor: pointer;
+          white-space: nowrap;
+          box-shadow: 0 4px 15px rgba(255,215,0,0.3);
+        }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ===== THANKS PAGE ===== */
+        #thanks-page {
+          display: none;
+          min-height: 100vh;
+          text-align: center;
+          padding: 80px 24px;
+          background: #1A1A2E;
+        }
+        #thanks-page .big { font-size: 90px; margin-bottom: 20px; }
+        #thanks-page h2 { font-size: 26px; margin-bottom: 8px; }
+        #thanks-page .sub { color: #888; font-size: 15px; margin-bottom: 8px; }
+        #thanks-page .table-info {
+          background: rgba(255,215,0,0.1);
+          border: 1px solid #FFD700;
+          color: #FFD700;
+          padding: 8px 20px;
+          border-radius: 20px;
+          display: inline-block;
+          margin: 16px 0;
+          font-size: 14px;
+        }
+
+        .order-summary {
+          background: #16213E;
+          border-radius: 14px;
+          padding: 16px;
+          margin: 20px auto;
+          max-width: 360px;
+          text-align: right;
+        }
+        .order-summary h3 { color: #FFD700; margin-bottom: 10px; font-size: 15px; }
+        .summary-item {
+          display: flex;
+          justify-content: space-between;
+          padding: 6px 0;
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+          font-size: 14px;
+        }
+        .summary-item:last-child { border: none; }
+        .summary-total {
+          display: flex;
+          justify-content: space-between;
+          padding-top: 10px;
+          margin-top: 4px;
+          font-weight: bold;
+          color: #FFD700;
+        }
+
+        .new-order-btn {
+          background: #FFD700;
+          color: #000;
+          border: none;
+          border-radius: 14px;
+          padding: 14px 36px;
+          font-size: 16px;
+          cursor: pointer;
+          font-weight: bold;
+          margin-top: 24px;
+          box-shadow: 0 4px 15px rgba(255,215,0,0.3);
+        }
+
+        /* ===== LOADING ===== */
+        .loading {
+          text-align: center;
+          padding: 60px 20px;
+          color: #555;
+          grid-column: span 2;
+        }
+        .spinner {
+          width: 40px; height: 40px;
+          border: 3px solid rgba(255,215,0,0.2);
+          border-top-color: #FFD700;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+          margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<!-- ===== MENU PAGE ===== -->
+<div id="menu-page">
+    <div class="header">
+        <div class="logo">☕</div>
+        <h2>XO Cafe Gaming</h2>
+        <div class="table-badge" id="table-badge">ترابيزة ...</div>
+    </div>
+
+    <div class="tabs" id="tabs"></div>
+
+    <div class="search-box">
+        <input type="text" id="search" placeholder="🔍 ابحث عن منتج..." oninput="onSearch()">
+    </div>
+
+    <div class="grid" id="grid">
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>جاري تحميل المنيو...</p>
+        </div>
+    </div>
+
+    <div class="cart-bar" id="cart-bar">
+        <div class="note-row">
+            <span>📝</span>
+            <input class="note-input" id="note" placeholder="ملاحظة للطلب (اختياري)">
+        </div>
+        <div class="cart-bottom">
+            <div class="cart-info">
+                <div class="count"><span id="cart-count">0</span> صنف</div>
+                <div class="total">الإجمالي: <span id="cart-price">0</span> ج</div>
+            </div>
+            <button class="send-btn" id="send-btn" onclick="sendOrder()">
+                ➤ أرسل الطلب
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== THANKS PAGE ===== -->
+<div id="thanks-page">
+    <div class="big">✅</div>
+    <h2>تم إرسال طلبك!</h2>
+    <p class="sub">سيتم تحضير طلبك قريباً 🎉</p>
+    <div class="table-info" id="thanks-table"></div>
+
+    <div class="order-summary" id="order-summary"></div>
+
+    <button class="new-order-btn" onclick="newOrder()">🔄 طلب جديد</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    // ========== CONFIG ==========
+    const SUPABASE_URL = 'https://xmhchkutuyzqhkcybxfp.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_4FUnKJu59V5FEtrnv2CZjQ_NIPKQcjT';
+
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // ========== TABLE INFO FROM URL ==========
+    const params = new URLSearchParams(window.location.search);
+    const TABLE_ID   = parseInt(params.get('table_id') || '1');
+    const TABLE_NAME = decodeURIComponent(params.get('table_name') || 'ترابيزة 1');
+
+    document.getElementById('table-badge').textContent = TABLE_NAME;
+    document.title = 'منيو - ' + TABLE_NAME;
+
+    // ========== STATE ==========
+    let allDrinks = [];
+    let cart = {};       // { id: qty }
+    let currentTab = null;
+    let lastOrder = [];
+
+    // ========== CATEGORIES ==========
+    const categories = [
+      { label: 'الكل',      temp: null },
+      { label: '☕ ساخن',   temp: 'hot' },
+      { label: '🧊 بارد',   temp: 'cold' },
+      { label: '🥤 عادي',   temp: 'normal' },
+      { label: '🛍 منتجات', temp: 'prodect' },
+    ];
+
+    const emojis = { hot:'☕', cold:'🧊', normal:'🥤', prodect:'🛍', shisha:'💨' };
+
+    // ========== LOAD MENU ==========
+    async function loadMenu() {
+      try {
+        const { data, error } = await db
+          .from('menu_items')
+          .select('*')
+          .eq('available', true)
+          .order('name');
+
+        if (error) throw error;
+
+        allDrinks = data || [];
+        buildTabs();
+        renderGrid(null);
+      } catch (e) {
+        document.getElementById('grid').innerHTML = `
+          <div class="empty" style="grid-column:span 2">
+            <div class="icon">😕</div>
+            <p>تعذر تحميل المنيو</p>
+            <p style="font-size:12px;margin-top:8px;color:#444">${e.message}</p>
+            <button onclick="loadMenu()" style="margin-top:16px;background:#FFD700;border:none;border-radius:10px;padding:8px 20px;cursor:pointer;font-weight:bold;">
+              إعادة المحاولة
+            </button>
+          </div>`;
+      }
+    }
+
+    // ========== TABS ==========
+    function buildTabs() {
+      const tabs = document.getElementById('tabs');
+      tabs.innerHTML = '';
+      categories.forEach((cat, i) => {
+        const tab = document.createElement('div');
+        tab.className = 'tab' + (i === 0 ? ' active' : '');
+        tab.textContent = cat.label;
+        tab.onclick = () => {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentTab = cat.temp;
+          document.getElementById('search').value = '';
+          renderGrid(cat.temp);
+        };
+        tabs.appendChild(tab);
+      });
+    }
+
+    // ========== RENDER GRID ==========
+    function renderGrid(temp, searchQuery = '') {
+      let filtered = temp ? allDrinks.filter(d => d.category === temp) : allDrinks;
+
+      if (searchQuery) {
+        filtered = filtered.filter(d =>
+          d.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }
+
+      const grid = document.getElementById('grid');
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty"><div class="icon">🔍</div><p>لا توجد نتائج</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(d => {
+        const qty = cart[d.id] || 0;
+        const inCart = qty > 0;
+        return `
+          <div class="card ${inCart ? 'in-cart' : ''}" id="card-${d.id}">
+            <div class="emoji">${emojis[d.category] || '🍹'}</div>
+            <div class="name">${d.name}</div>
+            <div class="price">${d.price} ج</div>
+            ${qty === 0
+              ? `<button class="add-btn" onclick="addToCart(${d.id})">+ إضافة</button>`
+              : `<div class="qty-ctrl">
+                  <button class="qty-btn" onclick="removeFromCart(${d.id})">−</button>
+                  <span class="qty-num">${qty}</span>
+                  <button class="qty-btn" onclick="addToCart(${d.id})">+</button>
+                </div>`
+            }
+          </div>`;
+      }).join('');
+    }
+
+    function onSearch() {
+      const q = document.getElementById('search').value;
+      renderGrid(currentTab, q);
+    }
+
+    // ========== CART ==========
+    function addToCart(id) {
+      cart[id] = (cart[id] || 0) + 1;
+      updateCartBar();
+      renderGrid(currentTab, document.getElementById('search').value);
+    }
+
+    function removeFromCart(id) {
+      cart[id] = (cart[id] || 0) - 1;
+      if (cart[id] <= 0) delete cart[id];
+      updateCartBar();
+      renderGrid(currentTab, document.getElementById('search').value);
+    }
+
+    function updateCartBar() {
+      const bar = document.getElementById('cart-bar');
+      const ids = Object.keys(cart);
+      if (ids.length === 0) { bar.classList.remove('visible'); return; }
+      bar.classList.add('visible');
+
+      let total = 0, count = 0;
+      ids.forEach(id => {
+        const drink = allDrinks.find(d => d.id == id);
+        if (drink) { total += drink.price * cart[id]; count += cart[id]; }
+      });
+      document.getElementById('cart-count').textContent = count;
+      document.getElementById('cart-price').textContent = total.toFixed(0);
+    }
+
+    // ========== SEND ORDER ==========
+    async function sendOrder() {
+      const btn = document.getElementById('send-btn');
+      btn.disabled = true;
+      btn.textContent = '⏳ جاري الإرسال...';
+
+      const items = Object.keys(cart).map(id => {
+        const drink = allDrinks.find(d => d.id == id);
+        return {
+          item_name: drink.name,
+          qty: cart[id],
+          price: drink.price,
+          total: drink.price * cart[id],
+        };
+      });
+
+      lastOrder = items;
+
+      try {
+        // 1. أضف الأوردر في Supabase
+        const { data: orderData, error: orderError } = await db
+          .from('orders')
+          .insert({
+            table_id: TABLE_ID,
+            table_name: TABLE_NAME,
+            status: 'pending',
+            note: document.getElementById('note').value || null,
+          })
+          .select()
+          .single();
+
+        if (orderError) throw orderError;
+
+        // 2. أضف عناصر الأوردر
+        const orderItems = items.map(item => ({
+          order_id: orderData.id,
+          ...item,
+        }));
+
+        const { error: itemsError } = await db
+          .from('order_items')
+          .insert(orderItems);
+
+        if (itemsError) throw itemsError;
+
+        // ✅ نجح — اعرض صفحة الشكر
+        showThanks(items);
+
+      } catch (e) {
+        alert('❌ فشل إرسال الطلب!\n' + e.message);
+        btn.disabled = false;
+        btn.textContent = '➤ أرسل الطلب';
+      }
+    }
+
+    // ========== THANKS PAGE ==========
+    function showThanks(items) {
+      document.getElementById('menu-page').style.display = 'none';
+      document.getElementById('thanks-page').style.display = 'block';
+      document.getElementById('thanks-table').textContent = '🪑 ' + TABLE_NAME;
+
+      let total = 0;
+      const summaryHtml = items.map(item => {
+        total += item.total;
+        return `<div class="summary-item">
+          <span>${item.item_name} × ${item.qty}</span>
+          <span>${item.total} ج</span>
+        </div>`;
+      }).join('');
+
+      document.getElementById('order-summary').innerHTML = `
+        <h3>📋 ملخص طلبك</h3>
+        ${summaryHtml}
+        <div class="summary-total">
+          <span>الإجمالي</span>
+          <span>${total} ج</span>
+        </div>`;
+    }
+
+    function newOrder() {
+      cart = {};
+      document.getElementById('note').value = '';
+      document.getElementById('menu-page').style.display = 'block';
+      document.getElementById('thanks-page').style.display = 'none';
+      document.getElementById('search').value = '';
+      renderGrid(currentTab);
+      updateCartBar();
+      window.scrollTo(0, 0);
+    }
+
+    // ========== INIT ==========
+    loadMenu();
+</script>
+</body>
+</html>
