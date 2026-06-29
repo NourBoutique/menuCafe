@@ -14,6 +14,84 @@
           padding-bottom: 140px;
         }
 
+        /* ===== WELCOME PAGE ===== */
+        #welcome-page {
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+          background: linear-gradient(180deg, #0F3460 0%, #1A1A2E 100%);
+        }
+        #welcome-page .logo { font-size: 60px; margin-bottom: 8px; }
+        #welcome-page h1 { color: #FFD700; font-size: 22px; margin-bottom: 4px; }
+        #welcome-page .table-name {
+          color: #aaa;
+          font-size: 14px;
+          margin-bottom: 32px;
+        }
+        .welcome-card {
+          background: #16213E;
+          border-radius: 18px;
+          padding: 24px 20px;
+          width: 100%;
+          max-width: 360px;
+          border: 1px solid rgba(255,215,0,0.15);
+        }
+        .welcome-card h2 {
+          font-size: 16px;
+          color: #FFD700;
+          margin-bottom: 20px;
+          text-align: center;
+        }
+        .field-label {
+          font-size: 13px;
+          color: #aaa;
+          margin-bottom: 6px;
+          display: block;
+        }
+        .field-input {
+          width: 100%;
+          background: rgba(255,255,255,0.07);
+          border: 1px solid rgba(255,255,255,0.15);
+          border-radius: 10px;
+          color: white;
+          padding: 12px 14px;
+          font-size: 15px;
+          outline: none;
+          margin-bottom: 16px;
+          font-family: Arial, sans-serif;
+          direction: rtl;
+        }
+        .field-input:focus {
+          border-color: #FFD700;
+        }
+        .field-input::placeholder { color: #555; }
+        .start-btn {
+          width: 100%;
+          background: linear-gradient(135deg, #FFD700, #FFA500);
+          color: #000;
+          border: none;
+          border-radius: 12px;
+          padding: 14px;
+          font-size: 16px;
+          font-weight: bold;
+          cursor: pointer;
+          margin-top: 4px;
+        }
+        .start-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .skip-btn {
+          width: 100%;
+          background: transparent;
+          color: #666;
+          border: none;
+          padding: 12px;
+          font-size: 13px;
+          cursor: pointer;
+          margin-top: 8px;
+        }
+
         /* ===== HEADER ===== */
         .header {
           background: linear-gradient(135deg, #16213E, #0F3460);
@@ -34,6 +112,11 @@
           padding: 3px 14px;
           border-radius: 20px;
           font-size: 13px;
+        }
+        .header .customer-info {
+          font-size: 12px;
+          color: #aaa;
+          margin-top: 4px;
         }
 
         /* ===== TABS ===== */
@@ -124,9 +207,7 @@
           font-weight: bold;
           cursor: pointer;
           font-size: 13px;
-          transition: opacity 0.2s;
         }
-        .add-btn:active { opacity: 0.8; }
 
         .qty-ctrl {
           display: flex;
@@ -143,14 +224,12 @@
           font-size: 18px;
           cursor: pointer;
           font-weight: bold;
-          line-height: 1;
           display: flex;
           align-items: center;
           justify-content: center;
         }
         .qty-num { font-size: 18px; font-weight: bold; color: #FFD700; }
 
-        /* ===== EMPTY ===== */
         .empty {
           text-align: center;
           padding: 60px 20px;
@@ -187,6 +266,7 @@
           padding: 7px 12px;
           font-size: 13px;
           outline: none;
+          font-family: Arial, sans-serif;
         }
         .note-input::placeholder { color: #555; }
 
@@ -210,7 +290,6 @@
           font-size: 15px;
           cursor: pointer;
           white-space: nowrap;
-          box-shadow: 0 4px 15px rgba(255,215,0,0.3);
         }
         .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -272,10 +351,8 @@
           cursor: pointer;
           font-weight: bold;
           margin-top: 24px;
-          box-shadow: 0 4px 15px rgba(255,215,0,0.3);
         }
 
-        /* ===== LOADING ===== */
         .loading {
           text-align: center;
           padding: 60px 20px;
@@ -295,12 +372,47 @@
 </head>
 <body>
 
+<!-- ===== WELCOME PAGE ===== -->
+<div id="welcome-page">
+  <div class="logo">☕</div>
+  <h1>XO Cafe Gaming</h1>
+  <div class="table-name" id="welcome-table-name">ترابيزة ...</div>
+
+  <div class="welcome-card">
+    <h2>👋 أهلاً بيك!</h2>
+    <label class="field-label">اسمك</label>
+    <input
+      class="field-input"
+      type="text"
+      id="customer-name"
+      placeholder="مثال: أحمد محمد"
+      oninput="checkWelcomeForm()"
+    >
+    <label class="field-label">رقم موبايلك</label>
+    <input
+      class="field-input"
+      type="tel"
+      id="customer-phone"
+      placeholder="مثال: 01012345678"
+      inputmode="numeric"
+      oninput="checkWelcomeForm()"
+    >
+    <button class="start-btn" id="start-btn" onclick="startMenu()" disabled>
+      🛍 عرض المنيو
+    </button>
+    <button class="skip-btn" onclick="skipWelcome()">
+      تخطي — أكمل بدون اسم
+    </button>
+  </div>
+</div>
+
 <!-- ===== MENU PAGE ===== -->
-<div id="menu-page">
+<div id="menu-page" style="display:none;">
     <div class="header">
         <div class="logo">☕</div>
         <h2>XO Cafe Gaming</h2>
         <div class="table-badge" id="table-badge">ترابيزة ...</div>
+        <div class="customer-info" id="header-customer-info"></div>
     </div>
 
     <div class="tabs" id="tabs"></div>
@@ -347,28 +459,22 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // ========== CONFIG ==========
     const SUPABASE_URL = 'https://xmhchkutuyzqhkcybxfp.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_4FUnKJu59V5FEtrnv2CZjQ_NIPKQcjT';
-
     const { createClient } = supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ========== TABLE INFO FROM URL ==========
     const params = new URLSearchParams(window.location.search);
     const TABLE_ID   = parseInt(params.get('table_id') || '1');
     const TABLE_NAME = decodeURIComponent(params.get('table_name') || 'ترابيزة 1');
 
-    document.getElementById('table-badge').textContent = TABLE_NAME;
-    document.title = 'منيو - ' + TABLE_NAME;
+    let customerName = '';
+    let customerPhone = '';
 
-    // ========== STATE ==========
     let allDrinks = [];
-    let cart = {};       // { id: qty }
+    let cart = {};
     let currentTab = null;
-    let lastOrder = [];
 
-    // ========== CATEGORIES ==========
     const categories = [
       { label: 'الكل',      temp: null },
       { label: '☕ ساخن',   temp: 'hot' },
@@ -376,10 +482,44 @@
       { label: '🥤 عادي',   temp: 'normal' },
       { label: '🛍 منتجات', temp: 'prodect' },
     ];
-
     const emojis = { hot:'☕', cold:'🧊', normal:'🥤', prodect:'🛍', shisha:'💨' };
 
-    // ========== LOAD MENU ==========
+    // ========== WELCOME ==========
+    document.getElementById('welcome-table-name').textContent = TABLE_NAME;
+
+    function checkWelcomeForm() {
+      const name  = document.getElementById('customer-name').value.trim();
+      const phone = document.getElementById('customer-phone').value.trim();
+      document.getElementById('start-btn').disabled = name.length < 2 || phone.length < 8;
+    }
+
+    function startMenu() {
+      customerName  = document.getElementById('customer-name').value.trim();
+      customerPhone = document.getElementById('customer-phone').value.trim();
+      showMenu();
+    }
+
+    function skipWelcome() {
+      customerName  = '';
+      customerPhone = '';
+      showMenu();
+    }
+
+    function showMenu() {
+      document.getElementById('welcome-page').style.display = 'none';
+      document.getElementById('menu-page').style.display   = 'block';
+      document.getElementById('table-badge').textContent   = TABLE_NAME;
+      document.title = 'منيو - ' + TABLE_NAME;
+
+      if (customerName) {
+        document.getElementById('header-customer-info').textContent =
+          '👤 ' + customerName + (customerPhone ? '  📞 ' + customerPhone : '');
+      }
+
+      loadMenu();
+    }
+
+    // ========== MENU ==========
     async function loadMenu() {
       try {
         const { data, error } = await db
@@ -387,9 +527,7 @@
           .select('*')
           .eq('available', true)
           .order('name');
-
         if (error) throw error;
-
         allDrinks = data || [];
         buildTabs();
         renderGrid(null);
@@ -406,7 +544,6 @@
       }
     }
 
-    // ========== TABS ==========
     function buildTabs() {
       const tabs = document.getElementById('tabs');
       tabs.innerHTML = '';
@@ -425,28 +562,20 @@
       });
     }
 
-    // ========== RENDER GRID ==========
     function renderGrid(temp, searchQuery = '') {
       let filtered = temp ? allDrinks.filter(d => d.category === temp) : allDrinks;
-
       if (searchQuery) {
-        filtered = filtered.filter(d =>
-          d.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        filtered = filtered.filter(d => d.name.toLowerCase().includes(searchQuery.toLowerCase()));
       }
-
       const grid = document.getElementById('grid');
-
       if (filtered.length === 0) {
         grid.innerHTML = `<div class="empty"><div class="icon">🔍</div><p>لا توجد نتائج</p></div>`;
         return;
       }
-
       grid.innerHTML = filtered.map(d => {
         const qty = cart[d.id] || 0;
-        const inCart = qty > 0;
         return `
-          <div class="card ${inCart ? 'in-cart' : ''}" id="card-${d.id}">
+          <div class="card ${qty > 0 ? 'in-cart' : ''}" id="card-${d.id}">
             <div class="emoji">${emojis[d.category] || '🍹'}</div>
             <div class="name">${d.name}</div>
             <div class="price">${d.price} ج</div>
@@ -463,11 +592,9 @@
     }
 
     function onSearch() {
-      const q = document.getElementById('search').value;
-      renderGrid(currentTab, q);
+      renderGrid(currentTab, document.getElementById('search').value);
     }
 
-    // ========== CART ==========
     function addToCart(id) {
       cart[id] = (cart[id] || 0) + 1;
       updateCartBar();
@@ -486,7 +613,6 @@
       const ids = Object.keys(cart);
       if (ids.length === 0) { bar.classList.remove('visible'); return; }
       bar.classList.add('visible');
-
       let total = 0, count = 0;
       ids.forEach(id => {
         const drink = allDrinks.find(d => d.id == id);
@@ -512,38 +638,27 @@
         };
       });
 
-      lastOrder = items;
-
       try {
-        // 1. أضف الأوردر في Supabase
         const { data: orderData, error: orderError } = await db
           .from('orders')
           .insert({
-            table_id: TABLE_ID,
-            table_name: TABLE_NAME,
-            status: 'pending',
-            note: document.getElementById('note').value || null,
+            table_id:     TABLE_ID,
+            table_name:   TABLE_NAME,
+            status:       'pending',
+            note:         document.getElementById('note').value || null,
+            customer_name: customerName || null,
+            customer_phone: customerPhone || null,
           })
           .select()
           .single();
 
         if (orderError) throw orderError;
 
-        // 2. أضف عناصر الأوردر
-        const orderItems = items.map(item => ({
-          order_id: orderData.id,
-          ...item,
-        }));
-
-        const { error: itemsError } = await db
-          .from('order_items')
-          .insert(orderItems);
-
+        const orderItems = items.map(item => ({ order_id: orderData.id, ...item }));
+        const { error: itemsError } = await db.from('order_items').insert(orderItems);
         if (itemsError) throw itemsError;
 
-        // ✅ نجح — اعرض صفحة الشكر
         showThanks(items);
-
       } catch (e) {
         alert('❌ فشل إرسال الطلب!\n' + e.message);
         btn.disabled = false;
@@ -551,11 +666,11 @@
       }
     }
 
-    // ========== THANKS PAGE ==========
     function showThanks(items) {
-      document.getElementById('menu-page').style.display = 'none';
+      document.getElementById('menu-page').style.display   = 'none';
       document.getElementById('thanks-page').style.display = 'block';
-      document.getElementById('thanks-table').textContent = '🪑 ' + TABLE_NAME;
+      document.getElementById('thanks-table').textContent  = '🪑 ' + TABLE_NAME +
+        (customerName ? '  —  👤 ' + customerName : '');
 
       let total = 0;
       const summaryHtml = items.map(item => {
@@ -578,16 +693,13 @@
     function newOrder() {
       cart = {};
       document.getElementById('note').value = '';
-      document.getElementById('menu-page').style.display = 'block';
+      document.getElementById('menu-page').style.display   = 'block';
       document.getElementById('thanks-page').style.display = 'none';
       document.getElementById('search').value = '';
       renderGrid(currentTab);
       updateCartBar();
       window.scrollTo(0, 0);
     }
-
-    // ========== INIT ==========
-    loadMenu();
 </script>
 </body>
 </html>
